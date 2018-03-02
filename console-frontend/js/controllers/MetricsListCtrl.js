@@ -306,6 +306,7 @@ angular.module('appControllers').controller('MetricListCtrl', ['$scope', 'Metric
     function findResolutionUrlForSource(source, showDefault) {
       var resolutionUrl = "/";
       var opentsdbIndex = "OpenTSDB";
+      var flinkIndex = "Flink";
       if ($scope.dm_endpoints !== undefined) {
         if (source === "kafka") {
           resolutionUrl = $scope.dm_endpoints.kafka_manager;
@@ -332,7 +333,10 @@ angular.module('appControllers').controller('MetricListCtrl', ['$scope', 'Metric
         } else if (source === "OOZIE") {
           resolutionUrl = ConfigService.userInterfaceIndex["Hadoop Cluster Manager"] +
             '#/main/views/WORKFLOW_MANAGER/1.0.0/PNDA_WORKFLOW';
-        } else if (source === "AMBARI" || source === "CM") {
+        } else if (source === "flink") {
+            resolutionUrl = ConfigService.userInterfaceIndex[flinkIndex];
+        }
+		else if (source === "AMBARI" || source === "CM") {
           resolutionUrl = ConfigService.userInterfaceIndex["Hadoop Cluster Manager"];
         } else if ($scope.dm_endpoints.cm_status_links !== undefined) {
           resolutionUrl = $scope.dm_endpoints.cm_status_links[source];
