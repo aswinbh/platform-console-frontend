@@ -332,8 +332,8 @@ angular.module('appControllers').controller('ApplicationCtrl', ['$scope', '$filt
         $scope.appMetrics = $filter('getByNameForDisplay')($scope.allMetrics, $scope.metricFilter);
       }
     };
-	
-	$scope.getApplicationSummary = function(appName){
+
+    $scope.getApplicationSummary = function(appName){
        DeploymentManagerService.getApplicationSummary(appName).then(function(data) {
          $scope.appSummaryJson = data;
        });
@@ -350,8 +350,8 @@ angular.module('appControllers').controller('ApplicationCtrl', ['$scope', '$filt
       $scope.reloadAppProperties = false;
       $scope.confirmProperties = false;
     };
-	
-    $scope.showInfoModal = function(appName){
+
+  $scope.showInfoModal = function(appName){
     $scope.getApplicationSummary(appName);
     var fields = {};
     if($scope.appSummaryJson === undefined){
@@ -372,6 +372,7 @@ angular.module('appControllers').controller('ApplicationCtrl', ['$scope', '$filt
     }else{
      var oozieComponents = [];
      var sparkComponents = [];
+     var flinkComponents = [];
      fields = {
          title: 'warning',
          name: appName,
@@ -405,8 +406,10 @@ angular.module('appControllers').controller('ApplicationCtrl', ['$scope', '$filt
         if(!$('#stageJobSummary-'+id).hasClass("hidden"))
             $('#stageJobSummary-'+id).addClass("hidden");
     };
-   
     for (var keys in $scope.appSummaryJson[appName]){
+       if(keys.startsWith("flink"))
+          flinkComponents.push($scope.appSummaryJson[appName][keys]);
+     
         if(keys.startsWith("oozie")){
           if($scope.appSummaryJson[appName].hasOwnProperty(keys)){
                 var oozieObject = {};
@@ -426,13 +429,10 @@ angular.module('appControllers').controller('ApplicationCtrl', ['$scope', '$filt
             }
         }
      }
-     if(sparkComponents.length > 0){
-         fields.sparkComponents = sparkComponents;
-     }
-    if(oozieComponents.length > 0){
-         fields.oozieComponents = oozieComponents;
-    }
-    ModalService.createModalView('partials/modals/application-status.html', fields);
+     fields.flinkComponents = flinkComponents;
+     fields.sparkComponents = sparkComponents;
+     fields.oozieComponents = oozieComponents;   
+     ModalService.createModalView('partials/modals/application-status.html', fields);
     }
    };
 
